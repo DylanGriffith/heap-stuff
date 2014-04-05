@@ -17,6 +17,8 @@ void runTests(void);
 void testFindLargestChild(void);
 Heap setupUnorderedHeap();
 Node nodeAt(Node *nodes, int i);
+void testDelete(void);
+void testInsert(void);
 
 int main(void) {
     runTests();
@@ -26,12 +28,40 @@ int main(void) {
 void runTests(void) {
     testNewHeap();
     testFindLargestChild();
-    testInstert();
+    testDelete();
+    testInsert();
     testSort();
 }
 
-void testInsert(void) {
+void testDelete(void) {
+    printf("Running delete test\n");
     Heap heap = setupUnorderedHeap();
+    makeMaxHeap(heap);
+    deleteFromHeap(heap, 4);
+    if (!isMaxHeap(heap) || heap->numNodes != 9) {
+        printFailed("Not a max heap after deleting 4");
+    }
+    printPassed();
+}
+
+void testInsert(void) {
+    printf("Running insert test\n");
+    Heap heap = setupUnorderedHeap();
+    makeMaxHeap(heap);
+    deleteFromHeap(heap, 4);
+    insertIntoHeap(heap, newNode(14));
+    if (!isMaxHeap(heap) || heap->numNodes != 10) {
+        printFailed("Not a max heap after deleting 4 and inserting 14");
+        return;
+    }
+
+    deleteFromHeap(heap, 1);
+    insertIntoHeap(heap, newNode(5));
+    if (!isMaxHeap(heap) || heap->numNodes != 10) {
+        printFailed("Not a max heap after reinserting 4");
+        return;
+    }
+    printPassed();
 }
 
 void testSort(void) {

@@ -6,12 +6,14 @@
 #define FALSE 0
 
 void maxHeapify(Heap heap, int node);
-int leftChild(Heap heap, int node);
-int rightChild(Heap heap, int node);
+int leftChild(int node);
+int rightChild(int node);
+int parent(int node);
 Node nodeAtIndex(Heap heap, int i);
 void swap(Heap heap, int a, int b);
 void setNodeAt(Heap heap, int i, Node node);
 int largestChild(Heap heap, int i);
+int compareNodesAt(Heap heap, int i, int j);
 
 void maxHeapify(Heap heap, int node) {
     int biggestBiggerChild = findLargestChild(heap, node);
@@ -22,20 +24,20 @@ void maxHeapify(Heap heap, int node) {
 }
 
 int findLargestChild(Heap heap, int i) {
-    int left = leftChild(heap, i);
-    int right = rightChild(heap, i);
+    int left = leftChild(i);
+    int right = rightChild(i);
     int biggestBiggerChild = NONE;
     if(left <= heap->numNodes) {
-        if(nodeComp(nodeAtIndex(heap, i), nodeAtIndex(heap, left)) < 0) {
+        if(compareNodesAt(heap, i, left) < 0) {
             biggestBiggerChild = left;
         }
     }
     if(right <= heap->numNodes) {
-        if(nodeComp(nodeAtIndex(heap, i), nodeAtIndex(heap, right)) < 0) {
+        if(compareNodesAt(heap, i, right) < 0) {
             if(biggestBiggerChild == NONE) {
                 biggestBiggerChild = right;
             }else {
-                if(nodeComp(nodeAtIndex(heap, biggestBiggerChild), nodeAtIndex(heap, right)) < 0) {
+                if(compareNodesAt(heap, left, right) < 0) {
                     biggestBiggerChild = right;
                 }
             }
@@ -59,11 +61,19 @@ void setNodeAt(Heap heap, int i, Node node) {
     *(heap->nodes + i) = node;
 }
 
-int leftChild(Heap heap, int node) {
+int compareNodesAt(Heap heap, int i, int j) {
+    return nodeComp(nodeAtIndex(heap, i), nodeAtIndex(heap, j));
+}
+
+int parent(int node) {
+    return node/2;
+}
+
+int leftChild(int node) {
     return node << 1;
 }
 
-int rightChild(Heap heap, int node) {
+int rightChild(int node) {
     return (node << 1) + 1;
 }
 
@@ -81,6 +91,22 @@ Node *heapSort(Heap heap) {
         maxHeapify(heap, 1);
     }
     return (heap->nodes + 1);
+}
+
+void deleteFromHeap(Heap heap, int i) {
+    swap(heap, i, heap->numNodes);
+    heap->numNodes--;
+    maxHeapify(heap, i);
+}
+
+void insertIntoHeap(Heap heap, Node node) {
+    heap->numNodes++;
+    int i = heap->numNodes;
+    setNodeAt(heap, i, node);
+    while(i > 1 && compareNodesAt(heap, i, parent(i)) > 0) {
+        swap(heap, i, parent(i));
+        i = parent(i);
+    }
 }
 
 int isLargerThanChildren(Heap heap, int i) {

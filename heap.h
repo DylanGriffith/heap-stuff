@@ -14,4 +14,7 @@ Heap newHeap(int numNodes, Node nodes[]);
 Node *heapSort(Heap heap);
 void makeMaxHeap(Heap heap);
 Node *getNodes(Heap heap);
-int findLargestChild(Heap heap, int partent);
+int findLargestChild(Heap heap, int parent);
+int isMaxHeap(Heap heap);
+void deleteFromHeap(Heap heap, int i);
+void insertIntoHeap(Heap heap, Node node);
